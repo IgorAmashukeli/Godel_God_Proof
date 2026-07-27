@@ -299,8 +299,8 @@ Proof.
   - apply Theorem2.
 Qed.
 
-(*Gödel theorem : God Nessesary Exists*)
-Theorem GodNessesaryExists : valid (Nessesary (m_exi _ G)).
+(*Gödel theorem : □ ∃ x G(x)*)
+Theorem GodNesEx : valid (Nessesary (m_exi _ G)).
 Proof.
   intro world.
   apply Lemma4.
