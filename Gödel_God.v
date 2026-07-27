@@ -1,9 +1,10 @@
+(*Classical Logic*)
 Axiom Classic : forall p, p \/ ~p.
 
+(*Modal Logic*)
 Parameter World : Type.
 Definition MProp := World -> Prop.
 Definition valid (P : MProp) : Prop := forall w : World, P w.
-
 Definition m_not (P : MProp) : MProp := fun w => ~ (P w).
 Definition m_impl (P Q : MProp) : MProp := fun w => P w -> Q w.
 Definition m_eqiv (P Q : MProp) : MProp := fun w => (P w <-> Q w).
@@ -11,17 +12,12 @@ Definition m_and (P Q : MProp) : MProp := fun w => P w /\ Q w.
 Definition m_or (P Q : MProp) : MProp := fun w => P w \/ Q w.
 Definition m_all (T : Type) (P : T -> MProp) : MProp := fun w => (forall x : T, P x w).
 Definition m_exi (T : Type) (P : T -> MProp) : MProp := fun w => (exists x : T, P x w).
-
 Parameter Nessesary : MProp -> MProp.
 Definition Possible (P : MProp) : MProp := m_not (Nessesary (m_not P)).
-
 Axiom Necessitation : forall P : MProp, valid P -> valid (Nessesary P).
 Axiom Axiom_K : forall P Q : MProp, valid (m_impl (Nessesary (m_impl P Q)) (m_impl (Nessesary P) (Nessesary Q))).
 Axiom Axiom_T : forall P : MProp, valid (m_impl (Nessesary P) P).
 Axiom Axiom_5 : forall P : MProp, valid (m_impl (Possible P) (Nessesary (Possible P))).
-
-Parameter Subject : Type.
-Parameter Positive : forall P : Subject -> MProp, MProp.
 
 Lemma Lemma1 : valid (
   m_all _ (fun (P : MProp) =>
@@ -148,9 +144,11 @@ Proof.
     ++ assumption.
 Qed.
 
+(*Gödel Axioms and Definitions*)
+Parameter Subject : Type.
+Parameter Positive : forall P : Subject -> MProp, MProp.
 Definition G (x : Subject) : MProp :=
     m_all _ (fun (Phi : Subject -> MProp) => m_impl (Positive Phi) (Phi x)).
-    
 Definition esse (phi : Subject -> MProp) (x : Subject) : MProp :=
   m_and (phi x) (
     m_all _ (fun (psi : Subject -> MProp) => 
@@ -164,15 +162,11 @@ Definition esse (phi : Subject -> MProp) (x : Subject) : MProp :=
       )
     )
   ).
-
 Definition E (x : Subject) : MProp := 
   m_all _ (fun (phi : Subject -> MProp) => m_impl (esse phi x) 
     (Nessesary (m_exi _ (fun(y : Subject) => phi y)
     ))
   ).
-  
- 
-  
 Axiom Axiom1 : valid (
   m_all _ (fun(phi : Subject -> MProp) =>
     m_all _ (fun (psi : Subject -> MProp) =>
@@ -199,17 +193,15 @@ m_all _ (fun (phi : Subject -> MProp) =>
   )
 ).
 Axiom Axiom3 : valid (Positive G).
-
 Axiom Axiom4 : valid (
   m_all _ (fun (phi : Subject -> MProp) => 
     m_impl (Positive phi) (Nessesary (Positive phi))
     
   )
 ).
-
 Axiom Axiom5 : valid (Positive E).
 
-
+(*Gödel lemmas and theorems*)
 Theorem Theorem1 : valid (
   m_all _ (fun (phi : Subject -> MProp) => 
     m_impl(Positive phi) (Possible (
@@ -249,15 +241,12 @@ enough (Positive psi world).
     -- assumption.
 Qed.
 
-
 Theorem Theorem2 : valid (Possible (m_exi _ G)).
 Proof.
   intro world.
   apply Theorem1.
   apply Axiom3.
 Qed.
-
-
 
 Theorem Theorem3 : valid (
   m_all _ (fun (x : Subject) =>
@@ -292,7 +281,6 @@ Proof.
           assumption.
 Qed.
 
-
 Lemma Lemma5 : valid (Possible (Nessesary (m_exi _ G))).
 Proof.
   intro world.
@@ -311,17 +299,11 @@ Proof.
   - apply Theorem2.
 Qed.
 
-Theorem GodExists : valid (Nessesary (m_exi _ G)).
+(*Gödel theorem : God Nessesary Exists*)
+Theorem GodNessesaryExists : valid (Nessesary (m_exi _ G)).
 Proof.
   intro world.
   apply Lemma4.
   apply Lemma5.
 Qed.
-
-
-
-
-
-
-  
   
