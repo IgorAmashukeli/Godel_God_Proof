@@ -300,10 +300,18 @@ Proof.
 Qed.
 
 (*Gödel theorem : □ ∃ x G(x)*)
-Theorem GodNesEx : valid (Nessesary (m_exi _ G)).
+Lemma GodNesEx : valid (Nessesary (m_exi _ G)).
 Proof.
   intro world.
   apply Lemma4.
   apply Lemma5.
+Qed.
+
+(*God Exists : ∃ x G(x)*)
+Theorem GodEx : valid (m_exi _ G).
+Proof.
+  intro world.
+  apply Axiom_T.
+  apply GodNesEx.
 Qed.
   
