@@ -14,6 +14,22 @@ Axiom Axiom2 : forall Phi : Subject -> Prop,
   
 Axiom Axiom3 : Positive G.
 
+
+Lemma GodPropPos : forall x : Subject, forall Phi : Subject -> Prop,
+  G x -> (Phi x) -> Positive Phi.
+Proof.
+  intros x Phi hG hPhi.
+  destruct (Classic (Positive Phi)).
+  - assumption.
+  - apply Axiom2 in H.
+    pose (Psi t := ~ Phi t).
+    specialize (hG Psi H).
+    exfalso.
+    apply hG.
+    assumption.
+Qed.
+
+
 Theorem GodEx : exists x, G x.
 Proof.
   destruct (Classic (exists x, G x)).
@@ -34,5 +50,23 @@ Proof.
       -- apply Axiom2 in H1.
          apply H1.
          exact Axiom3.
+Qed.
+
+
+Theorem GodExUn : exists! x, G x.
+Proof.
+  destruct (GodEx).
+  exists x.
+  unfold unique.
+  split.
+  assumption.
+  intros y hy.
+  pose (phi t := x = t).
+  specialize (hy phi).
+  apply hy.
+  apply (GodPropPos x).
+  + assumption.
+  + unfold phi.
+    reflexivity.
 Qed.
   

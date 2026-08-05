@@ -12,6 +12,7 @@ Definition m_and (P Q : MProp) : MProp := fun w => P w /\ Q w.
 Definition m_or (P Q : MProp) : MProp := fun w => P w \/ Q w.
 Definition m_all (T : Type) (P : T -> MProp) : MProp := fun w => (forall x : T, P x w).
 Definition m_exi (T : Type) (P : T -> MProp) : MProp := fun w => (exists x : T, P x w).
+Definition m_exi_uni (T : Type) (P : T -> MProp) : MProp := fun w => (exists! x : T, P x w).
 Parameter Nessesary : MProp -> MProp.
 Definition Possible (P : MProp) : MProp := m_not (Nessesary (m_not P)).
 Axiom Necessitation : forall P : MProp, valid P -> valid (Nessesary P).
@@ -143,6 +144,9 @@ Proof.
           assumption.
     ++ assumption.
 Qed.
+
+
+
 
 (*Gödel Axioms and Definitions*)
 Parameter Subject : Type.
@@ -299,7 +303,7 @@ Proof.
   - apply Theorem2.
 Qed.
 
-(*Gödel theorem : □ ∃ x G(x)*)
+(*In all acessible worlds, there is Godlike entity : □ ∃ x G(x)*)
 Lemma GodNesEx : valid (Nessesary (m_exi _ G)).
 Proof.
   intro world.
@@ -307,12 +311,68 @@ Proof.
   apply Lemma5.
 Qed.
 
-(*God Exists : ∃ x G(x)*)
-Theorem GodEx : valid (m_exi _ G).
+(*There exists entity, 
+which is Godlike in all accessible worlds*)
+Theorem GodNesExWorld : valid (m_exi _ (fun x => Nessesary (G x))).
 Proof.
   intro world.
-  apply Axiom_T.
-  apply GodNesEx.
+  pose (h := Axiom_T).
+  pose (g := GodNesEx world).
+  apply h in g.
+  destruct g as [x h_x].
+  exists x.
+  pose (P t (_ : World) := (x = t)).
+  assert (Positive P world).
+  - destruct (Classic (Positive P world)) as [H | H].
+    + assumption.
+    + apply Axiom2 in H.
+      pose (Q t (_ : World) := (x <> t)).
+      specialize (h_x Q H).
+      exfalso. apply h_x. reflexivity.
+  - apply Axiom4 in H.
+    clear h.
+    clear h_x.
+    revert H.
+    apply Axiom_K.
+    apply Necessitation.
+    intros w h_p.
+    pose (h := GodNesEx w).
+    apply Axiom_T in h.
+    destruct h as [y h_y].
+    enough (x = y).
+    + rewrite H. assumption.
+    + specialize (h_y P h_p).
+      unfold P in h_y.
+      assumption.
 Qed.
-  
+
+(*There exists unique entity, 
+which is Godlike in all accessible worlds*)
+Theorem GodNesExUnWorld : valid (m_exi_uni _ (fun x => Nessesary (G x))).
+Proof.
+  intro world.
+  destruct (GodNesExWorld world) as [x h_x].
+  exists x.
+  split.
+  - assumption.
+  - intros y h_y.
+    apply Axiom_T in h_x.
+    apply Axiom_T in h_y.
+    pose (P t (_ : World) := (x = t)).
+    assert (Positive P world).
+    + destruct (Classic (Positive P world)) as [ H | H]. 
+      ++ assumption.
+      ++ exfalso.
+         apply Axiom2 in H.
+         pose (Q t (_ : World) := (x <> t)).
+         specialize (h_x Q H).
+         apply h_x. reflexivity.
+    + specialize (h_y P H).
+      unfold P in h_y.
+      assumption.
+Qed.
+
+
+         
+      
   
