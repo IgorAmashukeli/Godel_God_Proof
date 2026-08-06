@@ -14,7 +14,7 @@ In Gödel_God.v:
 - I define Gödel's "esse" - Essential property
 - I define Gödel's "E" - Nessesary existence
 - I declare Gödel Axioms
-- I prove that from all these axioms and definitions, you can deduce that $\exists ! \; x, \Box \ G(x)$. This means that in each adjacent component of the graph all of the Modal Logic Kripke worlds, there exists unique Godlike figure
+- I prove that from all these axioms and definitions, you can deduce that $\exists ! x, \Box \ G(x)$. This means that in each adjacent component of the graph all of the Modal Logic Kripke worlds, there exists unique Godlike figure
 
 ## Simplified version
 
